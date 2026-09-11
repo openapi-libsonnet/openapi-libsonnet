@@ -6,8 +6,8 @@ English: [README.md](README.md)
 
 ## 지원 버전
 
-| 경로 | 사양 |
-| --- | --- |
+| 경로                 | 사양        |
+| -------------------- | ----------- |
 | `2.0/main.libsonnet` | OpenAPI 2.0 |
 | `3.0/main.libsonnet` | OpenAPI 3.0 |
 | `3.1/main.libsonnet` | OpenAPI 3.1 |
