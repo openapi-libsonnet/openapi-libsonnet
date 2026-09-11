@@ -1,0 +1,6 @@
+components:
+  schemas:
+    Pet:
+      oneOf:
+        - $ref: "#/components/schemas/Cat"
+        - $ref: "#/components/schemas/Dog"

@@ -1,0 +1,7 @@
+definitions:
+  Pet:
+    type: object
+    discriminator: petType
+    properties:
+      petType:
+        type: string

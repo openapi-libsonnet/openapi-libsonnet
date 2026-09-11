@@ -1,0 +1,9 @@
+definitions:
+  Pet:
+    type: object
+    properties:
+      pet:
+        type: object
+        properties:
+          cat:
+            type: string

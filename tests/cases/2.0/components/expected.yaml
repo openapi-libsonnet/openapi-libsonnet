@@ -1,0 +1,6 @@
+definitions:
+  Pet:
+    type: object
+    properties:
+      id:
+        type: integer

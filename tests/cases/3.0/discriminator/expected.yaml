@@ -1,0 +1,11 @@
+components:
+  schemas:
+    Pet:
+      type: object
+      discriminator:
+        propertyName: petType
+        mapping:
+          cat: "#/components/schemas/Cat"
+      properties:
+        petType:
+          type: string

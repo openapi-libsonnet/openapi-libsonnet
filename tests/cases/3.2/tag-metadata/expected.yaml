@@ -1,0 +1,4 @@
+tags:
+  - name: pets
+    kind: nav
+    parent: root
