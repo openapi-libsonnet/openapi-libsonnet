@@ -6,12 +6,12 @@ A Jsonnet library for building OpenAPI documents.
 
 ## Supported versions
 
-| Path | Specification |
-| --- | --- |
-| `2.0/main.libsonnet` | OpenAPI 2.0 |
-| `3.0/main.libsonnet` | OpenAPI 3.0 |
-| `3.1/main.libsonnet` | OpenAPI 3.1 |
-| `3.2/main.libsonnet` | OpenAPI 3.2 |
+| Path                 | Specification |
+| -------------------- | ------------- |
+| `2.0/main.libsonnet` | OpenAPI 2.0   |
+| `3.0/main.libsonnet` | OpenAPI 3.0   |
+| `3.1/main.libsonnet` | OpenAPI 3.1   |
+| `3.2/main.libsonnet` | OpenAPI 3.2   |
 
 ## Quick start
 
