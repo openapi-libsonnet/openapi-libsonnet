@@ -1,0 +1,70 @@
+name: Deploy docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'docs.jsonnet'
+      - 'jsonnetfile.json'
+      - '2.0/**'
+      - '3.0/**'
+      - '3.1/**'
+      - '3.2/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: stable
+          cache: false
+      - name: Restore Jsonnet tools cache
+        id: jsonnet-tools-cache
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: ~/go/bin
+          key: jsonnet-tools-${{ runner.os }}-${{ runner.arch }}-jsonnet-0.22.0-jb-0.6.0
+      - name: Install Jsonnet tools
+        run: |
+          if [ ! -x "$(go env GOPATH)/bin/jsonnet" ]; then
+            go install github.com/google/go-jsonnet/cmd/jsonnet@v0.22.0
+          fi
+          if [ ! -x "$(go env GOPATH)/bin/jb" ]; then
+            go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@v0.6.0
+          fi
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Save Jsonnet tools cache
+        if: always()
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: ~/go/bin
+          key: jsonnet-tools-${{ runner.os }}-${{ runner.arch }}-jsonnet-0.22.0-jb-0.6.0
+      - run: jb install
+      - run: jsonnet -J vendor -S -c -m docs docs.jsonnet
+      - uses: actions/configure-pages@v5
+      - name: Build Markdown with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: docs
+          destination: _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
