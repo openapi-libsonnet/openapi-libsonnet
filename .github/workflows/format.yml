@@ -1,0 +1,62 @@
+name: Format
+
+on:
+  pull_request:
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          check-latest: true
+          cache: npm
+
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: stable
+          cache: false
+
+      - run: npm ci --ignore-scripts
+      - run: npx prettier --write .
+
+      - name: Restore jsonnetfmt cache
+        id: jsonnetfmt-cache
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: |
+            ~/go/bin/jsonnetfmt
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: jsonnetfmt-${{ runner.os }}-${{ runner.arch }}-v0.22.0
+
+      - name: Install jsonnetfmt
+        run: |
+          if [ ! -x "$(go env GOPATH)/bin/jsonnetfmt" ]; then
+            go install github.com/google/go-jsonnet/cmd/jsonnetfmt@v0.22.0
+          fi
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Save jsonnetfmt cache
+        if: always()
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: |
+            ~/go/bin/jsonnetfmt
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ steps.jsonnetfmt-cache.outputs.cache-primary-key }}
+
+      - run: find . -type f -name '*.jsonnet' -print0 | xargs -0 -r jsonnetfmt -i
+
+      - uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a
