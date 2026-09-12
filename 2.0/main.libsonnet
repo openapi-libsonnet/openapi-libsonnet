@@ -3732,3 +3732,11 @@
                    },
                },
 }
++ {
+  ref: {
+    ref(path): { '$ref': path },
+    definition(path): { '$ref': '#/definitions/' + path },
+    parameter(path): { '$ref': '#/parameters/' + path },
+    response(path): { '$ref': '#/responses/' + path },
+  },
+}
