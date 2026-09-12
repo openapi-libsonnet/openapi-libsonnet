@@ -38,7 +38,23 @@ def test_library_is_valid_jsonnet(jsonnet, version):
         f"std.objectFields(import '{version}/main.libsonnet')",
     )
 
-    assert fields == ["definitions", "openapi"]
+    assert fields == ["definitions", "openapi", "ref"]
+
+
+@pytest.mark.parametrize(
+    ("version", "kind", "path", "expected"),
+    [
+        ("2.0", "definition", "User/address", "#/definitions/User/address"),
+        ("3.0", "schema", "User/address", "#/components/schemas/User/address"),
+    ],
+)
+def test_ref_utility_uses_version_path(jsonnet, version, kind, path, expected):
+    result = evaluate(
+        jsonnet,
+        f"(import '{version}/main.libsonnet').ref.{kind}('{path}')",
+    )
+
+    assert result == {"$ref": expected}
 
 
 @pytest.mark.parametrize("sample", CASES, ids=lambda path: str(path.relative_to(ROOT / "tests" / "cases")))
