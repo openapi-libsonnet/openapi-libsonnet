@@ -51,6 +51,16 @@ local api = lib.openapi
 api
 ```
 
+버전별 재사용 컴포넌트는 `ref` 유틸리티로 참조할 수 있습니다. 인자는 이름이 아니라 JSON Pointer의 하위 경로입니다.
+
+```jsonnet
+local lib = import 'github.com/openapi-libsonnet/openapi-libsonnet/3.1/main.libsonnet';
+
+lib.ref.schema('User/properties/id')
+```
+
+OpenAPI 2.0은 `definition`, OpenAPI 3.x는 `schema`를 사용하며, 각 버전의 컴포넌트 종류별 참조 함수가 제공됩니다.
+
 결과는 일반 Jsonnet 파일과 동일하게 출력할 수 있습니다.
 
 ```bash
