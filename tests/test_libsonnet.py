@@ -57,6 +57,19 @@ def test_ref_utility_uses_version_path(jsonnet, version, kind, path, expected):
     assert result == {"$ref": expected}
 
 
+@pytest.mark.parametrize(
+    ("version", "kind"),
+    [("2.0", "definition"), ("3.0", "schema"), ("3.1", "schema"), ("3.2", "schema")],
+)
+def test_ref_utility_has_documentation_metadata(jsonnet, version, kind):
+    documented = evaluate(
+        jsonnet,
+        f"std.all([std.objectHasAll((import '{version}/main.libsonnet').ref, field) for field in ['#', '#{kind}']])",
+    )
+
+    assert documented is True
+
+
 @pytest.mark.parametrize("sample", CASES, ids=lambda path: str(path.relative_to(ROOT / "tests" / "cases")))
 def test_sample_document_matches_expected(jsonnet, sample):
     expected = yaml.safe_load((sample.parent / "expected.yaml").read_text())
